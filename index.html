@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Rút Thăm Lì Xì</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;800&display=swap" rel="stylesheet">
+
+<style>
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Poppins', sans-serif;
+}
+
+body {
+  height: 100vh;
+  background: linear-gradient(135deg, #b30000, #ff1a1a, #ffcc00);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+/* ===== BACKGROUND COINS ===== */
+.bg-coins {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+.coin {
+  position: absolute;
+  width: 14px;
+  height: 14px;
+  background: gold;
+  border-radius: 50%;
+  opacity: 0.7;
+  animation: fall linear infinite;
+}
+
+@keyframes fall {
+  from { transform: translateY(-10vh); }
+  to { transform: translateY(110vh); }
+}
+
+/* ===== MAIN CARD ===== */
+.container {
+  position: relative;
+  z-index: 2;
+  background: rgba(255,255,255,0.1);
+  backdrop-filter: blur(10px);
+  padding: 40px;
+  border-radius: 24px;
+  text-align: center;
+  box-shadow: 0 20px 40px rgba(0,0,0,0.25);
+  min-width: 320px;
+}
+
+.title {
+  color: #fff;
+  font-size: 30px;
+  font-weight: 800;
+  margin-bottom: 20px;
+}
+
+/* ===== ENVELOPE ===== */
+.envelope {
+  width: 180px;
+  height: 240px;
+  background: linear-gradient(180deg, #ff2d2d, #b30000);
+  border-radius: 16px;
+  margin: 20px auto;
+  position: relative;
+  cursor: pointer;
+  transition: transform 0.3s;
+  box-shadow: 0 15px 25px rgba(0,0,0,0.35);
+}
+
+.envelope:hover {
+  transform: scale(1.05) rotate(-2deg);
+}
+
+.envelope::before {
+  content: "🧧";
+  font-size: 64px;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+/* ===== OPEN ENVELOPE SHOW MONEY ===== */
+.money-card {
+  margin: 20px auto 0;
+  width: 200px;
+  height: 120px;
+  border-radius: 16px;
+  background: linear-gradient(135deg, #fff7cc, #ffe066);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 28px;
+  font-weight: 800;
+  color: #b30000;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+  opacity: 0;
+  transform: translateY(20px) scale(0.8);
+}
+
+.money-card.show {
+  animation: moneyPop 0.6s forwards;
+}
+
+@keyframes moneyPop {
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* ===== BUTTON ===== */
+button {
+  margin-top: 18px;
+  padding: 12px 22px;
+  border: none;
+  border-radius: 999px;
+  background: gold;
+  font-weight: 700;
+  cursor: pointer;
+  transition: 0.25s;
+}
+
+button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 15px rgba(0,0,0,0.25);
+}
+
+.hint {
+  color: #fff;
+  opacity: 0.9;
+  font-size: 14px;
+}
+</style>
+</head>
+
+<body>
+
+<div class="bg-coins" id="coins"></div>
+
+<div class="container">
+  <div class="title">🎉 Rút Thăm Lì Xì 🎉</div>
+
+  <div class="envelope" id="envelope"></div>
+  <div class="hint">Bấm vào bao lì xì để mở</div>
+
+  <!-- TIỀN HIỆN RA SAU KHI RÚT -->
+  <div class="money-card" id="moneyCard"></div>
+
+  <button onclick="drawAgain()">Rút lại</button>
+</div>
+
+<script>
+// ===== DANH SÁCH TIỀN =====
+const rewards = [
+  "10.000đ",
+  "20.000đ",
+  "50.000đ",
+  "100.000đ",
+  "200.000đ",
+  "500.000đ"
+];
+
+const envelope = document.getElementById('envelope');
+const moneyCard = document.getElementById('moneyCard');
+
+let opened = false;
+
+function drawReward() {
+  if (opened) return;
+  opened = true;
+
+  // chọn tiền
+  const r = rewards[Math.floor(Math.random() * rewards.length)];
+
+  // hiệu ứng mở bao
+  envelope.style.transform = "scale(0.9) rotateY(180deg)";
+  envelope.style.opacity = "0.6";
+
+  // hiện tiền ra màn hình
+  moneyCard.textContent = r;
+  moneyCard.classList.remove('show');
+  void moneyCard.offsetWidth;
+  moneyCard.classList.add('show');
+}
+
+envelope.addEventListener('click', drawReward);
+
+function drawAgain() {
+  opened = false;
+  envelope.style.transform = "";
+  envelope.style.opacity = "1";
+  moneyCard.classList.remove('show');
+  moneyCard.textContent = "";
+}
+
+// ===== COIN RƠI =====
+const coinBox = document.getElementById('coins');
+for (let i = 0; i < 40; i++) {
+  const c = document.createElement('div');
+  c.className = 'coin';
+  c.style.left = Math.random() * 100 + 'vw';
+  c.style.animationDuration = (3 + Math.random() * 5) + 's';
+  c.style.animationDelay = Math.random() * 5 + 's';
+  coinBox.appendChild(c);
+}
+</script>
+
+</body>
+</html>
